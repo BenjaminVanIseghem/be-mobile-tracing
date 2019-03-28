@@ -25,10 +25,18 @@ func StatusCode(span opentracing.Span, i int) opentracing.Span {
 	return span
 }
 
-//String adds string logs to the span and returns it
-func String(span opentracing.Span, s string) opentracing.Span {
+//Info adds info logs to the span and returns it
+func Info(span opentracing.Span, s string) opentracing.Span {
 	span.LogFields(
 		log.String("Info", s),
+	)
+	return span
+}
+
+//String adds string logs to the span and returns it
+func String(span opentracing.Span, s string, s2 string) opentracing.Span {
+	span.LogFields(
+		log.String(s, s2),
 	)
 	return span
 }
