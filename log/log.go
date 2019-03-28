@@ -7,7 +7,7 @@ import (
 
 func logError(span opentracing.Span, err error, s string) opentracing.Span {
 	span.LogFields(
-		log.String("Error message", "s"),
+		log.String("Error message", s),
 		log.Error(err),
 	)
 	return span
@@ -17,8 +17,11 @@ func logStatusCode(i int) {
 
 }
 
-func logString(s string) {
-
+func logString(span opentracing.Span, s string) opentracing.Span {
+	span.LogFields(
+		log.String("Message", s),
+	)
+	return span
 }
 
 func logInt(i int) {
