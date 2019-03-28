@@ -10,7 +10,7 @@ import (
 )
 
 //Tracers is the map that keeps all active tracers with their names as the key
-var Tracers map[string]opentracing.Tracer
+var Tracers = map[string]opentracing.Tracer{}
 
 //Closers is the slice that keeps the closers to close all tracers
 var Closers []io.Closer
