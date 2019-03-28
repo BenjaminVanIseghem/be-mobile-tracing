@@ -80,8 +80,8 @@ func AddNewTracer(service string) ([]opentracing.Tracer, []io.Closer) {
 }
 
 //CloseAllTracers closes all tracers in the given slice
-func CloseAllTracers(c []io.Closer) {
-	for i := 0; i < len(c); i++ {
-		c[i].Close()
+func CloseAllTracers() {
+	for i := 0; i < len(Closers); i++ {
+		Closers[i].Close()
 	}
 }
