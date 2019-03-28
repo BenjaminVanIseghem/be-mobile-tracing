@@ -5,8 +5,8 @@ import (
 	"github.com/opentracing/opentracing-go/log"
 )
 
-//LogError adds error logs to the spans and returns it
-func LogError(span opentracing.Span, err error, s string) opentracing.Span {
+//Error adds error logs to the spans and returns it
+func Error(span opentracing.Span, err error, s string) opentracing.Span {
 	span.LogFields(
 		log.String("Error message", s),
 		log.Error(err),
@@ -14,20 +14,20 @@ func LogError(span opentracing.Span, err error, s string) opentracing.Span {
 	return span
 }
 
-//LogStatusCode adds statuscode logs to the spans and returns it
-func LogStatusCode(i int) {
+//StatusCode adds statuscode logs to the spans and returns it
+func StatusCode(i int) {
 
 }
 
-//LogString adds string logs to the spans and returns it
-func LogString(span opentracing.Span, s string) opentracing.Span {
+//String adds string logs to the spans and returns it
+func String(span opentracing.Span, s string) opentracing.Span {
 	span.LogFields(
 		log.String("Message", s),
 	)
 	return span
 }
 
-//LogInt adds integer logs to the spans and returns it
-func LogInt(i int) {
+//Int adds integer logs to the spans and returns it
+func Int(i int) {
 
 }
