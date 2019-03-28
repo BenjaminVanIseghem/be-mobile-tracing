@@ -18,8 +18,9 @@ func Error(span opentracing.Span, err error, s string) opentracing.Span {
 }
 
 //StatusCode adds statuscode logs to the span and returns it
-func StatusCode(span opentracing.Span, i int) opentracing.Span {
+func StatusCode(span opentracing.Span, s string, i int) opentracing.Span {
 	span.LogFields(
+		log.String("Message", s),
 		log.Int("Statuscode", i),
 	)
 	return span
