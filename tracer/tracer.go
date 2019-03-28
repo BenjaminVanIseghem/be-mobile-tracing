@@ -9,8 +9,8 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 )
 
-//Tracers is the slice that keeps all active tracers
-var Tracers []opentracing.Tracer
+//Tracers is the map that keeps all active tracers with their names as the key
+var Tracers map[string]opentracing.Tracer
 
 //Closers is the slice that keeps the closers to close all tracers
 var Closers []io.Closer
@@ -34,7 +34,7 @@ func Init(service string) (opentracing.Tracer, io.Closer) {
 }
 
 // InitMultiple returns an array of instances of Jaeger Tracer that sample 100% of traces and log all spans to stdout.
-func InitMultiple(services []string) ([]opentracing.Tracer, []io.Closer) {
+func InitMultiple(services []string) {
 
 	cfg := &config.Configuration{
 		Sampler: &config.SamplerConfig{
@@ -50,15 +50,13 @@ func InitMultiple(services []string) ([]opentracing.Tracer, []io.Closer) {
 		if err != nil {
 			panic(fmt.Sprintf("ERROR: cannot init Jaeger: %v\n", err))
 		}
-		Tracers = append(Tracers, tracer)
+		Tracers[services[i]] = tracer
 		Closers = append(Closers, closer)
 	}
-
-	return Tracers, Closers
 }
 
 //AddNewTracer adds a new tracer to the existing Tracer and Closer slices
-func AddNewTracer(service string) ([]opentracing.Tracer, []io.Closer) {
+func AddNewTracer(service string) {
 	cfg := &config.Configuration{
 		Sampler: &config.SamplerConfig{
 			Type:  "const",
@@ -73,10 +71,8 @@ func AddNewTracer(service string) ([]opentracing.Tracer, []io.Closer) {
 		panic(fmt.Sprintf("ERROR: cannot init Jaeger: %v\n", err))
 	}
 
-	Tracers = append(Tracers, tracer)
+	Tracers[service] = tracer
 	Closers = append(Closers, closer)
-
-	return Tracers, Closers
 }
 
 //CloseAllTracers closes all tracers in the given slice
