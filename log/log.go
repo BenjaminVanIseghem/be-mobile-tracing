@@ -40,12 +40,15 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 }
 
 //StatusCode adds statuscode logs to the span and returns it
-func StatusCode(span opentracing.Span, s string, i int) opentracing.Span {
+func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.Span {
 	span.LogFields(
 		log.String("Message", s),
 		log.Int("Statuscode", i),
 	)
-	logrus.WithField("Statuscode", i).Error(s, i)
+	if isLog {
+		logrus.WithField("Statuscode", i).Error(s, i)
+	}
+
 	return span
 }
 
@@ -68,23 +71,23 @@ func String(span opentracing.Span, s string, s2 string) opentracing.Span {
 }
 
 //Int adds integer logs to the span and returns it
-func Int(span opentracing.Span, s string, i int) opentracing.Span {
+func Int(span opentracing.Span, s string, i int, isLog bool) opentracing.Span {
 	span.LogFields(
 		log.Int(s, i),
 	)
-
-	logrus.Println(s, i)
-
+	if isLog {
+		logrus.Println(s, i)
+	}
 	return span
 }
 
 //Object adds an object log to the span and returns it
-func Object(span opentracing.Span, s string, obj interface{}) opentracing.Span {
+func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentracing.Span {
 	span.LogFields(
 		log.Object(s, obj),
 	)
-
-	logrus.Println(s, obj)
-
+	if isLog {
+		logrus.Println(s, obj)
+	}
 	return span
 }
