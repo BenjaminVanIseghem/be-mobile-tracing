@@ -7,15 +7,32 @@ import (
 )
 
 //Future functionality will include DEBUG and WARNING messages which can be filtered or excluded in jaeger
+//IDEA: ADD EXTRA PARAMETER TO PASS WHICH LEVEL SHOULD BE LOGGED (DEBUG, INFO, WARNING, ERROR, FATAL, PANIC, OR NONE)
 
-//Error adds error logs to the span and returns it
+//Error adds error logs to the span and returns it, also logs the error
 func Error(span opentracing.Span, err error, s string) opentracing.Span {
 	span.LogFields(
 		log.String("Error message", s),
 		log.Error(err),
 	)
 
+	span.SetTag("Error", err.Error())
+
 	logrus.Errorf("%s: %v", s, err)
+
+	return span
+}
+
+//Fatal adds error logs to the span and returns it, also logs the error
+func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
+	span.LogFields(
+		log.String("Fatal message", s),
+		log.Error(err),
+	)
+
+	span.SetTag("Fatal", err.Error())
+
+	logrus.Fatalf("%s: %v", s, err)
 
 	return span
 }
