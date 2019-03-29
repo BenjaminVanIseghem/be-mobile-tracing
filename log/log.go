@@ -10,7 +10,7 @@ import (
 //IDEA: ADD EXTRA PARAMETER TO PASS WHICH LEVEL SHOULD BE LOGGED (DEBUG, INFO, WARNING, ERROR, FATAL, PANIC, OR NONE)
 
 //Error adds error logs to the span and returns it, also logs the error
-func Error(span opentracing.Span, err error, s string) opentracing.Span {
+func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.Span {
 	span.LogFields(
 		log.String("Error message", s),
 		log.Error(err),
@@ -18,7 +18,9 @@ func Error(span opentracing.Span, err error, s string) opentracing.Span {
 
 	span.SetTag("Error", err.Error())
 
-	logrus.Errorf("%s: %v", s, err)
+	if isLog {
+		logrus.Errorf("%s: %v", s, err)
+	}
 
 	return span
 }
