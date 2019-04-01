@@ -25,6 +25,16 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 	return span
 }
 
+//Warning adds error logs to the span and returns it, also logs the error
+func Warning(span opentracing.Span, s string) opentracing.Span {
+	span.LogFields(
+		log.String("Warning message", s),
+	)
+
+	logrus.Warning(s)
+	return span
+}
+
 //Fatal adds error logs to the span and returns it, also logs the error
 func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 	span.LogFields(
