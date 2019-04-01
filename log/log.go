@@ -16,7 +16,7 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 		log.Error(err),
 	)
 
-	span.SetTag("Error", err.Error())
+	span.SetTag("error", true)
 
 	if isLog {
 		logrus.Errorf("%s: %v", s, err)
@@ -42,7 +42,7 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 		log.Error(err),
 	)
 
-	span.SetTag("Fatal", err.Error())
+	span.SetTag("error", true)
 
 	logrus.Fatalf("%s: %v", s, err)
 
@@ -58,6 +58,7 @@ func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.
 	if isLog {
 		logrus.WithField("Statuscode", i).Error(s, i)
 	}
+	span.SetTag("error", true)
 
 	return span
 }
