@@ -6,8 +6,33 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//Future functionality will include DEBUG and WARNING messages which can be filtered or excluded in jaeger
-//IDEA: ADD EXTRA PARAMETER TO PASS WHICH LEVEL SHOULD BE LOGGED (DEBUG, INFO, WARNING, ERROR, FATAL, PANIC, OR NONE)
+//Debug adds debug logs to the span and returns it
+func Debug(span opentracing.Span, s string) opentracing.Span {
+	span.LogFields(
+		log.String("Debug", s),
+	)
+	logrus.Debug(s)
+	return span
+}
+
+//Info adds info logs to the span and returns it
+func Info(span opentracing.Span, s string) opentracing.Span {
+	span.LogFields(
+		log.String("Info", s),
+	)
+	logrus.Info(s)
+	return span
+}
+
+//Warning adds error logs to the span and returns it, also logs the error
+func Warning(span opentracing.Span, s string) opentracing.Span {
+	span.LogFields(
+		log.String("Warning message", s),
+	)
+
+	logrus.Warning(s)
+	return span
+}
 
 //Error adds error logs to the span and returns it, also logs the error
 func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.Span {
@@ -25,16 +50,6 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 	return span
 }
 
-//Warning adds error logs to the span and returns it, also logs the error
-func Warning(span opentracing.Span, s string) opentracing.Span {
-	span.LogFields(
-		log.String("Warning message", s),
-	)
-
-	logrus.Warning(s)
-	return span
-}
-
 //Fatal adds error logs to the span and returns it, also logs the error
 func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 	span.LogFields(
@@ -43,6 +58,7 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 	)
 
 	span.SetTag("error", true)
+	span.SetTag("fatal", true)
 
 	logrus.Fatalf("%s: %v", s, err)
 
@@ -60,15 +76,6 @@ func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.
 	}
 	span.SetTag("error", true)
 
-	return span
-}
-
-//Info adds info logs to the span and returns it
-func Info(span opentracing.Span, s string) opentracing.Span {
-	span.LogFields(
-		log.String("Info", s),
-	)
-	logrus.Info(s)
 	return span
 }
 
@@ -100,5 +107,23 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 	if isLog {
 		logrus.Println(s, obj)
 	}
+	return span
+}
+
+//StringMap adds the value of each key as a log to the span with the maps key as the log key
+func StringMap(span opentracing.Span, m map[string]string) opentracing.Span {
+	for key, value := range m {
+		span.LogKV(key, value)
+	}
+
+	return span
+}
+
+//IntMap adds the value of each key as a log to the span with the maps key as the log key
+func IntMap(span opentracing.Span, m map[string]int) opentracing.Span {
+	for key, value := range m {
+		span.LogKV(key, value)
+	}
+
 	return span
 }
