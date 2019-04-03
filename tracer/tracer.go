@@ -23,7 +23,7 @@ func Init(service string) (opentracing.Tracer, io.Closer) {
 			Param: 1,
 		},
 		Reporter: &config.ReporterConfig{
-			LogSpans: true,
+			LogSpans: false,
 		},
 	}
 	tracer, closer, err := cfg.New(service, config.Logger(jaeger.StdLogger))
@@ -42,7 +42,7 @@ func InitMultiple(services []string) {
 			Param: 1,
 		},
 		Reporter: &config.ReporterConfig{
-			LogSpans: true,
+			LogSpans: false,
 		},
 	}
 	for i := 0; i < len(services); i++ {
@@ -63,7 +63,7 @@ func AddNewTracer(service string) {
 			Param: 1,
 		},
 		Reporter: &config.ReporterConfig{
-			LogSpans: true,
+			LogSpans: false,
 		},
 	}
 	tracer, closer, err := cfg.New(service, config.Logger(jaeger.StdLogger))
