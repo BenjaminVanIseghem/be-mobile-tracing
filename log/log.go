@@ -44,10 +44,14 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 	if err != nil {
 		span.SetTag("error", true)
 		if isLog {
-			logrus.Errorf("%s: %v", s, err)
+			id := span.BaggageItem("eventId")
+			if id != "" {
+				logrus.WithField("eventId", id).Errorf("%s: %v", s, err)
+			} else {
+				logrus.Errorf("%s: %v", s, err)
+			}
 		}
 	}
-
 	return span
 }
 
