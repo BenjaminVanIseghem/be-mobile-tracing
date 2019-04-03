@@ -11,7 +11,14 @@ func Debug(span opentracing.Span, s string) opentracing.Span {
 	span.LogFields(
 		log.String("Debug", s),
 	)
-	logrus.Debug(s)
+
+	id := span.BaggageItem("eventId")
+	if id != "" {
+		logrus.WithField("eventId", id).Debug(s)
+	} else {
+		logrus.Debug(s)
+	}
+
 	return span
 }
 
@@ -20,7 +27,14 @@ func Info(span opentracing.Span, s string) opentracing.Span {
 	span.LogFields(
 		log.String("Info", s),
 	)
-	logrus.Info(s)
+
+	id := span.BaggageItem("eventId")
+	if id != "" {
+		logrus.WithField("eventId", id).Info(s)
+	} else {
+		logrus.Info(s)
+	}
+
 	return span
 }
 
@@ -30,7 +44,13 @@ func Warning(span opentracing.Span, s string) opentracing.Span {
 		log.String("Warning message", s),
 	)
 
-	logrus.Warning(s)
+	id := span.BaggageItem("eventId")
+	if id != "" {
+		logrus.WithField("eventId", id).Warning(s)
+	} else {
+		logrus.Warning(s)
+	}
+
 	return span
 }
 
@@ -65,7 +85,12 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 	span.SetTag("error", true)
 	span.SetTag("fatal", true)
 
-	logrus.Fatalf("%s: %v", s, err)
+	id := span.BaggageItem("eventId")
+	if id != "" {
+		logrus.WithField("eventId", id).Fatalf("%s: %v", s, err)
+	} else {
+		logrus.Fatalf("%s: %v", s, err)
+	}
 
 	return span
 }
@@ -77,7 +102,12 @@ func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.
 		log.Int("Statuscode", i),
 	)
 	if isLog {
-		logrus.WithField("Statuscode", i).Error(s, i)
+		id := span.BaggageItem("eventId")
+		if id != "" {
+			logrus.WithField("Statuscode", i).WithField("eventId", id).Error(s, i)
+		} else {
+			logrus.WithField("Statuscode", i).Error(s, i)
+		}
 	}
 	span.SetTag("error", true)
 
@@ -99,7 +129,13 @@ func Int(span opentracing.Span, s string, i int, isLog bool) opentracing.Span {
 		log.Int(s, i),
 	)
 	if isLog {
-		logrus.Println(s, i)
+		id := span.BaggageItem("eventId")
+		if id != "" {
+			logrus.WithField("eventId", id).Println(s, i)
+		} else {
+			logrus.Println(s, i)
+		}
+
 	}
 	return span
 }
@@ -110,7 +146,12 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 		log.Object(s, obj),
 	)
 	if isLog {
-		logrus.Println(s, obj)
+		id := span.BaggageItem("eventId")
+		if id != "" {
+			logrus.WithField("eventId", id).Println(s, obj)
+		} else {
+			logrus.Println(s, obj)
+		}
 	}
 	return span
 }
