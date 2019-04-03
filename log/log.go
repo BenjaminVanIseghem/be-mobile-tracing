@@ -43,10 +43,9 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 
 	if err != nil {
 		span.SetTag("error", true)
-	}
-
-	if isLog {
-		logrus.Errorf("%s: %v", s, err)
+		if isLog {
+			logrus.Errorf("%s: %v", s, err)
+		}
 	}
 
 	return span
