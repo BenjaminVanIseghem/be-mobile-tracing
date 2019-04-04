@@ -13,17 +13,12 @@ func Debug(span opentracing.Span, s string) opentracing.Span {
 	)
 
 	//Check for baggage
-	event := span.BaggageItem("eventId")
-	file := span.BaggageItem("file")
-	if event != "" && file != "" {
-		logrus.WithField("eventId", event).WithField("file", file).Debug(s)
-	} else if event != "" && file == "" {
-		logrus.WithField("eventId", event).Debug(s)
-	} else if event == "" && file != "" {
-		logrus.WithField("file", file).Debug(s)
-	} else {
-		logrus.Debug(s)
-	}
+	fields := logrus.Fields{}
+	span.Context().ForeachBaggageItem(func(key string, value string) bool {
+		fields[key] = value
+		return true
+	})
+	logrus.WithFields(fields).Debug(s)
 
 	return span
 }
@@ -35,17 +30,12 @@ func Info(span opentracing.Span, s string) opentracing.Span {
 	)
 
 	//Check for baggage
-	event := span.BaggageItem("eventId")
-	file := span.BaggageItem("file")
-	if event != "" && file != "" {
-		logrus.WithField("eventId", event).WithField("file", file).Info(s)
-	} else if event != "" && file == "" {
-		logrus.WithField("eventId", event).Info(s)
-	} else if event == "" && file != "" {
-		logrus.WithField("file", file).Info(s)
-	} else {
-		logrus.Info(s)
-	}
+	fields := logrus.Fields{}
+	span.Context().ForeachBaggageItem(func(key string, value string) bool {
+		fields[key] = value
+		return true
+	})
+	logrus.WithFields(fields).Info(s)
 
 	return span
 }
@@ -57,17 +47,12 @@ func Warning(span opentracing.Span, s string) opentracing.Span {
 	)
 
 	//Check for baggage
-	event := span.BaggageItem("eventId")
-	file := span.BaggageItem("file")
-	if event != "" && file != "" {
-		logrus.WithField("eventId", event).WithField("file", file).Warning(s)
-	} else if event != "" && file == "" {
-		logrus.WithField("eventId", event).Warning(s)
-	} else if event == "" && file != "" {
-		logrus.WithField("file", file).Warning(s)
-	} else {
-		logrus.Warning(s)
-	}
+	fields := logrus.Fields{}
+	span.Context().ForeachBaggageItem(func(key string, value string) bool {
+		fields[key] = value
+		return true
+	})
+	logrus.WithFields(fields).Warning(s)
 
 	return span
 }
@@ -84,17 +69,6 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 		//Set error tag for filtering
 		span.SetTag("error", true)
 		if isLog {
-			// event := span.BaggageItem("eventId")
-			// file := span.BaggageItem("file")
-			// if event != "" && file != "" {
-			// 	logrus.WithField("eventId", event).WithField("file", file).Errorf("%s: %v", s, err)
-			// } else if event != "" && file == "" {
-			// 	logrus.WithField("eventId", event).Errorf("%s: %v", s, err)
-			// } else if event == "" && file != "" {
-			// 	logrus.WithField("file", file).Errorf("%s: %v", s, err)
-			// } else {
-			// 	logrus.Errorf("%s: %v", s, err)
-			// }
 			fields := logrus.Fields{}
 			span.Context().ForeachBaggageItem(func(key string, value string) bool {
 				fields[key] = value
@@ -119,17 +93,12 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 	span.SetTag("fatal", true)
 
 	//Check for baggage
-	event := span.BaggageItem("eventId")
-	file := span.BaggageItem("file")
-	if event != "" && file != "" {
-		logrus.WithField("eventId", event).WithField("file", file).Fatalf("%s: %v", s, err)
-	} else if event != "" && file == "" {
-		logrus.WithField("eventId", event).Fatalf("%s: %v", s, err)
-	} else if event == "" && file != "" {
-		logrus.WithField("file", file).Fatalf("%s: %v", s, err)
-	} else {
-		logrus.Fatalf("%s: %v", s, err)
-	}
+	fields := logrus.Fields{}
+	span.Context().ForeachBaggageItem(func(key string, value string) bool {
+		fields[key] = value
+		return true
+	})
+	logrus.WithFields(fields).Fatalf("%s: %v", s, err)
 
 	return span
 }
@@ -145,17 +114,12 @@ func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.
 
 	//Check for baggage and if it needs to be logged
 	if isLog {
-		event := span.BaggageItem("eventId")
-		file := span.BaggageItem("file")
-		if event != "" && file != "" {
-			logrus.WithField("eventId", event).WithField("file", file).Errorf("%s: %v", s, i)
-		} else if event != "" && file == "" {
-			logrus.WithField("eventId", event).Errorf("%s: %v", s, i)
-		} else if event == "" && file != "" {
-			logrus.WithField("file", file).Errorf("%s: %v", s, i)
-		} else {
-			logrus.Errorf("%s: %v", s, i)
-		}
+		fields := logrus.Fields{}
+		span.Context().ForeachBaggageItem(func(key string, value string) bool {
+			fields[key] = value
+			return true
+		})
+		logrus.WithFields(fields).Errorf("%s: %v", s, i)
 	}
 
 	return span
@@ -176,17 +140,12 @@ func Int(span opentracing.Span, s string, i int, isLog bool) opentracing.Span {
 		log.Int(s, i),
 	)
 	if isLog {
-		event := span.BaggageItem("eventId")
-		file := span.BaggageItem("file")
-		if event != "" && file != "" {
-			logrus.WithField("eventId", event).WithField("file", file).Println(s, i)
-		} else if event != "" && file == "" {
-			logrus.WithField("eventId", event).Println(s, i)
-		} else if event == "" && file != "" {
-			logrus.WithField("file", file).Println(s, i)
-		} else {
-			logrus.Println(s, i)
-		}
+		fields := logrus.Fields{}
+		span.Context().ForeachBaggageItem(func(key string, value string) bool {
+			fields[key] = value
+			return true
+		})
+		logrus.WithFields(fields).Println(s, i)
 	}
 	return span
 }
@@ -199,17 +158,12 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 	//Check if it needs to be logged
 	if isLog {
 		//Check for baggage
-		event := span.BaggageItem("eventId")
-		file := span.BaggageItem("file")
-		if event != "" && file != "" {
-			logrus.WithField("eventId", event).WithField("file", file).Println(s, obj)
-		} else if event != "" && file == "" {
-			logrus.WithField("eventId", event).Println(s, obj)
-		} else if event == "" && file != "" {
-			logrus.WithField("file", file).Println(s, obj)
-		} else {
-			logrus.Println(s, obj)
-		}
+		fields := logrus.Fields{}
+		span.Context().ForeachBaggageItem(func(key string, value string) bool {
+			fields[key] = value
+			return true
+		})
+		logrus.WithFields(fields).Errorf(s, obj)
 	}
 	return span
 }
