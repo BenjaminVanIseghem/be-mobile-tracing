@@ -12,9 +12,15 @@ func Debug(span opentracing.Span, s string) opentracing.Span {
 		log.String("Debug", s),
 	)
 
-	id := span.BaggageItem("eventId")
-	if id != "" {
-		logrus.WithField("eventId", id).Debug(s)
+	//Check for baggage
+	event := span.BaggageItem("eventId")
+	file := span.BaggageItem("file")
+	if event != "" && file != "" {
+		logrus.WithField("eventId", event).WithField("file", file).Debug(s)
+	} else if event != "" && file == "" {
+		logrus.WithField("eventId", event).Debug(s)
+	} else if event == "" && file != "" {
+		logrus.WithField("file", file).Debug(s)
 	} else {
 		logrus.Debug(s)
 	}
@@ -28,9 +34,15 @@ func Info(span opentracing.Span, s string) opentracing.Span {
 		log.String("Info", s),
 	)
 
-	id := span.BaggageItem("eventId")
-	if id != "" {
-		logrus.WithField("eventId", id).Info(s)
+	//Check for baggage
+	event := span.BaggageItem("eventId")
+	file := span.BaggageItem("file")
+	if event != "" && file != "" {
+		logrus.WithField("eventId", event).WithField("file", file).Info(s)
+	} else if event != "" && file == "" {
+		logrus.WithField("eventId", event).Info(s)
+	} else if event == "" && file != "" {
+		logrus.WithField("file", file).Info(s)
 	} else {
 		logrus.Info(s)
 	}
@@ -44,9 +56,15 @@ func Warning(span opentracing.Span, s string) opentracing.Span {
 		log.String("Warning message", s),
 	)
 
-	id := span.BaggageItem("eventId")
-	if id != "" {
-		logrus.WithField("eventId", id).Warning(s)
+	//Check for baggage
+	event := span.BaggageItem("eventId")
+	file := span.BaggageItem("file")
+	if event != "" && file != "" {
+		logrus.WithField("eventId", event).WithField("file", file).Warning(s)
+	} else if event != "" && file == "" {
+		logrus.WithField("eventId", event).Warning(s)
+	} else if event == "" && file != "" {
+		logrus.WithField("file", file).Warning(s)
 	} else {
 		logrus.Warning(s)
 	}
@@ -61,12 +79,19 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 		log.Error(err),
 	)
 
+	//Check for baggage and if it needs to be logged
 	if err != nil {
+		//Set error tag for filtering
 		span.SetTag("error", true)
 		if isLog {
-			id := span.BaggageItem("eventId")
-			if id != "" {
-				logrus.WithField("eventId", id).Errorf("%s: %v", s, err)
+			event := span.BaggageItem("eventId")
+			file := span.BaggageItem("file")
+			if event != "" && file != "" {
+				logrus.WithField("eventId", event).WithField("file", file).Errorf("%s: %v", s, err)
+			} else if event != "" && file == "" {
+				logrus.WithField("eventId", event).Errorf("%s: %v", s, err)
+			} else if event == "" && file != "" {
+				logrus.WithField("file", file).Errorf("%s: %v", s, err)
 			} else {
 				logrus.Errorf("%s: %v", s, err)
 			}
@@ -82,12 +107,19 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 		log.Error(err),
 	)
 
+	//Set tags for filtering
 	span.SetTag("error", true)
 	span.SetTag("fatal", true)
 
-	id := span.BaggageItem("eventId")
-	if id != "" {
-		logrus.WithField("eventId", id).Fatalf("%s: %v", s, err)
+	//Check for baggage
+	event := span.BaggageItem("eventId")
+	file := span.BaggageItem("file")
+	if event != "" && file != "" {
+		logrus.WithField("eventId", event).WithField("file", file).Fatalf("%s: %v", s, err)
+	} else if event != "" && file == "" {
+		logrus.WithField("eventId", event).Fatalf("%s: %v", s, err)
+	} else if event == "" && file != "" {
+		logrus.WithField("file", file).Fatalf("%s: %v", s, err)
 	} else {
 		logrus.Fatalf("%s: %v", s, err)
 	}
@@ -101,15 +133,23 @@ func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.
 		log.String("Message", s),
 		log.Int("Statuscode", i),
 	)
+	//Set tag for filtering
+	span.SetTag("error", true)
+
+	//Check for baggage and if it needs to be logged
 	if isLog {
-		id := span.BaggageItem("eventId")
-		if id != "" {
-			logrus.WithField("Statuscode", i).WithField("eventId", id).Error(s, i)
+		event := span.BaggageItem("eventId")
+		file := span.BaggageItem("file")
+		if event != "" && file != "" {
+			logrus.WithField("eventId", event).WithField("file", file).Errorf("%s: %v", s, i)
+		} else if event != "" && file == "" {
+			logrus.WithField("eventId", event).Errorf("%s: %v", s, i)
+		} else if event == "" && file != "" {
+			logrus.WithField("file", file).Errorf("%s: %v", s, i)
 		} else {
-			logrus.WithField("Statuscode", i).Error(s, i)
+			logrus.Errorf("%s: %v", s, i)
 		}
 	}
-	span.SetTag("error", true)
 
 	return span
 }
@@ -129,13 +169,17 @@ func Int(span opentracing.Span, s string, i int, isLog bool) opentracing.Span {
 		log.Int(s, i),
 	)
 	if isLog {
-		id := span.BaggageItem("eventId")
-		if id != "" {
-			logrus.WithField("eventId", id).Println(s, i)
+		event := span.BaggageItem("eventId")
+		file := span.BaggageItem("file")
+		if event != "" && file != "" {
+			logrus.WithField("eventId", event).WithField("file", file).Println(s, i)
+		} else if event != "" && file == "" {
+			logrus.WithField("eventId", event).Println(s, i)
+		} else if event == "" && file != "" {
+			logrus.WithField("file", file).Println(s, i)
 		} else {
 			logrus.Println(s, i)
 		}
-
 	}
 	return span
 }
@@ -145,10 +189,17 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 	span.LogFields(
 		log.Object(s, obj),
 	)
+	//Check if it needs to be logged
 	if isLog {
-		id := span.BaggageItem("eventId")
-		if id != "" {
-			logrus.WithField("eventId", id).Println(s, obj)
+		//Check for baggage
+		event := span.BaggageItem("eventId")
+		file := span.BaggageItem("file")
+		if event != "" && file != "" {
+			logrus.WithField("eventId", event).WithField("file", file).Println(s, obj)
+		} else if event != "" && file == "" {
+			logrus.WithField("eventId", event).Println(s, obj)
+		} else if event == "" && file != "" {
+			logrus.WithField("file", file).Println(s, obj)
 		} else {
 			logrus.Println(s, obj)
 		}
@@ -156,20 +207,26 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 	return span
 }
 
-//StringMap adds the value of each key as a log to the span with the maps key as the log key
+//StringMap maps the keys and values from a given map to span logs and returns the span
 func StringMap(span opentracing.Span, m map[string]string) opentracing.Span {
 	for key, value := range m {
 		span.LogKV(key, value)
 	}
-
 	return span
 }
 
-//IntMap adds the value of each key as a log to the span with the maps key as the log key
+//IntMap maps the keys and values from a given map to span logs and returns the span
 func IntMap(span opentracing.Span, m map[string]int) opentracing.Span {
 	for key, value := range m {
 		span.LogKV(key, value)
 	}
+	return span
+}
 
+//InterfaceMap maps the keys and values from a given map to span logs and returns the span
+func InterfaceMap(span opentracing.Span, m map[string]interface{}) opentracing.Span {
+	for key, value := range m {
+		span.LogKV(key, value)
+	}
 	return span
 }
