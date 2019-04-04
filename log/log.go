@@ -163,7 +163,7 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 			fields[key] = value
 			return true
 		})
-		logrus.WithFields(fields).Errorf(s, obj)
+		logrus.WithFields(fields).Println(s, obj)
 	}
 	return span
 }
