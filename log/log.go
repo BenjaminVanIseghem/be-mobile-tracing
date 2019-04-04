@@ -84,19 +84,26 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 		//Set error tag for filtering
 		span.SetTag("error", true)
 		if isLog {
-			event := span.BaggageItem("eventId")
-			file := span.BaggageItem("file")
-			if event != "" && file != "" {
-				logrus.WithField("eventId", event).WithField("file", file).Errorf("%s: %v", s, err)
-			} else if event != "" && file == "" {
-				logrus.WithField("eventId", event).Errorf("%s: %v", s, err)
-			} else if event == "" && file != "" {
-				logrus.WithField("file", file).Errorf("%s: %v", s, err)
-			} else {
-				logrus.Errorf("%s: %v", s, err)
-			}
+			// event := span.BaggageItem("eventId")
+			// file := span.BaggageItem("file")
+			// if event != "" && file != "" {
+			// 	logrus.WithField("eventId", event).WithField("file", file).Errorf("%s: %v", s, err)
+			// } else if event != "" && file == "" {
+			// 	logrus.WithField("eventId", event).Errorf("%s: %v", s, err)
+			// } else if event == "" && file != "" {
+			// 	logrus.WithField("file", file).Errorf("%s: %v", s, err)
+			// } else {
+			// 	logrus.Errorf("%s: %v", s, err)
+			// }
+			fields := logrus.Fields{}
+			span.Context().ForeachBaggageItem(func(key string, value string) bool {
+				fields[key] = value
+				return true
+			})
+			logrus.WithFields(fields).Errorf("%s: %v", s, err)
 		}
 	}
+
 	return span
 }
 
