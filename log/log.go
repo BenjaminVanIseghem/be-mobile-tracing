@@ -17,7 +17,7 @@ const logFile = "/go/src/logs/logrus.log"
 
 func init() {
 
-	file, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
+	file, err := os.OpenFile("logger.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 	if err != nil {
 		logger.Fatal(err)
 	}
