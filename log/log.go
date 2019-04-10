@@ -13,7 +13,7 @@ var (
 	logger = logrus.New()
 )
 
-const logFile = "/var/log/logrus.log"
+const logFile = "/go/src/logs/logrus.log"
 
 func init() {
 
