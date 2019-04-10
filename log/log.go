@@ -1,10 +1,30 @@
 package log
 
 import (
+	"io"
+	"os"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/log"
 	"github.com/sirupsen/logrus"
 )
+
+var (
+	logger = logrus.New()
+)
+
+const logFile = "/var/log/logrus.log"
+
+func init() {
+
+	file, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	mw := io.MultiWriter(os.Stdout, file)
+	logger.SetOutput(mw)
+}
 
 //Debug adds debug logs to the span and returns it
 func Debug(span opentracing.Span, s string) opentracing.Span {
