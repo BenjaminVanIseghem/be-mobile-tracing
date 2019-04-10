@@ -21,9 +21,6 @@ func init() {
 		os.Exit(1)
 	}
 
-	// Log as JSON instead of the default ASCII formatter.
-	logger.SetFormatter(&logrus.JSONFormatter{})
-
 	// Out to file
 	logger.Out = f
 
