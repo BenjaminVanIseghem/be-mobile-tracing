@@ -1,32 +1,10 @@
 package log
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/log"
 	"github.com/sirupsen/logrus"
 )
-
-var (
-	logger = logrus.New()
-)
-
-func init() {
-	f, err := os.OpenFile("chainlogs.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to initialize log file %s", err)
-		os.Exit(1)
-	}
-
-	// Out to file
-	logger.Out = f
-
-	// Level
-	logger.Level = logrus.InfoLevel
-}
 
 //Debug adds debug logs to the span and returns it
 func Debug(span opentracing.Span, s string) opentracing.Span {
@@ -40,7 +18,7 @@ func Debug(span opentracing.Span, s string) opentracing.Span {
 		fields[key] = value
 		return true
 	})
-	logger.WithFields(fields).Debug(s)
+	logrus.WithFields(fields).Debug(s)
 
 	return span
 }
@@ -57,7 +35,7 @@ func Info(span opentracing.Span, s string) opentracing.Span {
 		fields[key] = value
 		return true
 	})
-	logger.WithFields(fields).Info(s)
+	logrus.WithFields(fields).Info(s)
 
 	return span
 }
@@ -74,7 +52,7 @@ func Warning(span opentracing.Span, s string) opentracing.Span {
 		fields[key] = value
 		return true
 	})
-	logger.WithFields(fields).Warning(s)
+	logrus.WithFields(fields).Warning(s)
 
 	return span
 }
@@ -96,7 +74,7 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 				fields[key] = value
 				return true
 			})
-			logger.WithFields(fields).Errorf("%s: %v", s, err)
+			logrus.WithFields(fields).Errorf("%s: %v", s, err)
 		}
 	}
 
@@ -120,7 +98,7 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 		fields[key] = value
 		return true
 	})
-	logger.WithFields(fields).Fatalf("%s: %v", s, err)
+	logrus.WithFields(fields).Fatalf("%s: %v", s, err)
 
 	return span
 }
@@ -141,7 +119,7 @@ func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.
 			fields[key] = value
 			return true
 		})
-		logger.WithFields(fields).Errorf("%s: %v", s, i)
+		logrus.WithFields(fields).Errorf("%s: %v", s, i)
 	}
 
 	return span
@@ -167,7 +145,7 @@ func Int(span opentracing.Span, s string, i int, isLog bool) opentracing.Span {
 			fields[key] = value
 			return true
 		})
-		logger.WithFields(fields).Println(s, i)
+		logrus.WithFields(fields).Println(s, i)
 	}
 	return span
 }
@@ -185,7 +163,7 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 			fields[key] = value
 			return true
 		})
-		logger.WithFields(fields).Println(s, obj)
+		logrus.WithFields(fields).Println(s, obj)
 	}
 	return span
 }
