@@ -14,7 +14,7 @@ var (
 )
 
 func init() {
-	f, err := os.OpenFile("/go/src/logs/chainlogs.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
+	f, err := os.OpenFile("/go/src/logs/chainlogs.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
 
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to initialize log file %s", err)
