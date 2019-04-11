@@ -1,7 +1,6 @@
 package log
 
 import (
-	"io"
 	"os"
 
 	"github.com/opentracing/opentracing-go"
@@ -22,9 +21,7 @@ func init() {
 		logger.Fatal(err)
 	}
 
-	//Set multiwriter
-	mw := io.MultiWriter(os.Stdout, file)
-	logger.SetOutput(mw)
+	logger.SetOutput(file)
 }
 
 //Debug adds debug logs to the span and returns it
@@ -40,6 +37,7 @@ func Debug(span opentracing.Span, s string) opentracing.Span {
 		return true
 	})
 	logger.WithFields(fields).Debug(s)
+	logrus.WithFields(fields).Debug(s)
 
 	return span
 }
@@ -57,6 +55,7 @@ func Info(span opentracing.Span, s string) opentracing.Span {
 		return true
 	})
 	logger.WithFields(fields).Info(s)
+	logrus.WithFields(fields).Info(s)
 
 	return span
 }
@@ -74,6 +73,7 @@ func Warning(span opentracing.Span, s string) opentracing.Span {
 		return true
 	})
 	logger.WithFields(fields).Warning(s)
+	logrus.WithFields(fields).Warning(s)
 
 	return span
 }
@@ -96,6 +96,7 @@ func Error(span opentracing.Span, err error, s string, isLog bool) opentracing.S
 				return true
 			})
 			logger.WithFields(fields).Errorf("%s: %v", s, err)
+			logrus.WithFields(fields).Errorf("%s: %v", s, err)
 		}
 	}
 
@@ -120,6 +121,7 @@ func Fatal(span opentracing.Span, err error, s string) opentracing.Span {
 		return true
 	})
 	logger.WithFields(fields).Fatalf("%s: %v", s, err)
+	logrus.WithFields(fields).Fatalf("%s: %v", s, err)
 
 	return span
 }
@@ -141,6 +143,7 @@ func StatusCode(span opentracing.Span, s string, i int, isLog bool) opentracing.
 			return true
 		})
 		logger.WithFields(fields).Errorf("%s: %v", s, i)
+		logrus.WithFields(fields).Errorf("%s: %v", s, i)
 	}
 
 	return span
@@ -167,6 +170,7 @@ func Int(span opentracing.Span, s string, i int, isLog bool) opentracing.Span {
 			return true
 		})
 		logger.WithFields(fields).Println(s, i)
+		logrus.WithFields(fields).Println(s, i)
 	}
 	return span
 }
@@ -185,6 +189,7 @@ func Object(span opentracing.Span, s string, obj interface{}, isLog bool) opentr
 			return true
 		})
 		logger.WithFields(fields).Println(s, obj)
+		logrus.WithFields(fields).Println(s, obj)
 	}
 	return span
 }
