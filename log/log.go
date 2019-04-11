@@ -13,15 +13,16 @@ var (
 	logger = logrus.New()
 )
 
-const logFile = "/go/src/logs/logrus.log"
+const logFile = "/private/etc/promtail/logrus.log"
 
 func init() {
 
-	file, err := os.OpenFile("logger.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
+	file, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0755)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
+	//Set multiwriter
 	mw := io.MultiWriter(os.Stdout, file)
 	logger.SetOutput(mw)
 }
